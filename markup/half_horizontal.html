@@ -21,11 +21,13 @@
           {% assign route = data.references.routes[trip.routeId] %}
           {% assign scheduledLocal = stopTime.departureTime | plus: trmnl.user.utc_offset %}
 
-          <div class="flex flex--row" style="align-items: center; padding: 4px 0; border-bottom: 1px solid #000; gap: 10px;">
+          <div class="flex flex--row" style="align-items: center; padding: 4px 0; gap: 10px;">
 
             <span style="display: inline-block; min-width: 42px; background: #000; color: #fff; font-weight: 700; font-size: 13px; padding: 2px 5px; text-align: center; border-radius: 3px; flex-shrink: 0;">{{ route.shortName }}</span>
 
             <span style="font-size: 12px; flex-shrink: 0; line-height: 1;">{% if route.type == "TRAM" %}🚋{% elsif route.type == "SUBWAY" %}🚇{% elsif route.type == "RAIL" or route.type == "SUBURBAN_RAILWAY" %}🚆{% elsif route.type == "TROLLEYBUS" %}🚎{% elsif route.type == "FERRY" %}⛴{% elsif route.type == "FUNICULAR" %}🚟{% elsif route.type == "GONDOLA" or route.type == "CABLE_CAR" %}🚡{% elsif route.type == "BICYCLE" %}🚲{% elsif route.type == "CAR" %}🚗{% elsif route.type == "WALK" %}🚶{% else %}🚌{% endif %}</span>
+
+            {% assign row_stop = data.references.stops[stopTime.stopId] %}<span style="font-size: 10px; flex-shrink: 0; max-width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid #000; border-radius: 2px; padding: 1px 3px;">{{ row_stop.name }}</span>
 
             <span style="flex: 1; font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ stopTime.stopHeadsign }}</span>
 
@@ -52,6 +54,6 @@
     <img class="image" src="/images/plugins/trmnl--render.svg" alt="">
     <span class="title">Budapest Futár</span>
     {% assign fetchTime = trmnl.system.timestamp_utc | plus: trmnl.user.utc_offset %}
-    <span class="instance">{% if stop.name != blank %}{{ stop.name }}{% else %}{{ trmnl.plugin_settings.instance_name }}{% endif %} · {{ fetchTime | date: "%H:%M" }}</span>
+    <span class="instance">{{ fetchTime | date: "%H:%M" }}</span>
   </div>
 </div>
