@@ -1,0 +1,27 @@
+# Budapest Futár - TRMNL Private Plugin Configuration
+#
+# Setup steps:
+# 1. Get a free API key at https://opendata.bkk.hu/
+# 2. Find your stop ID at https://futar.bkk.hu/
+#    (hover over a stop on the map — the ID appears as e.g. #F02297, prefix with BKK_ → BKK_F02297)
+# 3. In TRMNL, create a Private Plugin with "Polling" strategy
+# 4. Set the polling URL below (substituting your stop ID and API key via merge variables)
+# 5. Paste the Liquid markup from markup/full.html into the template editor
+
+polling_url: "https://futar.bkk.hu/api/query/v1/ws/otp/api/where/arrivals-and-departures-for-stop.json?stopId=##{{ stop_id }}&minutesBefore=0&minutesAfter=60&limit=15&includeReferences=compact&key=##{{ api_key }}"
+
+polling_verb: GET
+
+custom_fields:
+  - keyname: api_key
+    name: BKK API Key
+    field_type: password
+    required: true
+    placeholder: "Your API key from opendata.bkk.hu"
+
+  - keyname: stop_id
+    name: Stop ID
+    field_type: string
+    required: true
+    placeholder: "e.g. BKK_F02297"
+    description: "Find your stop ID on futar.bkk.hu — hover over a stop and prepend BKK_ to the shown ID"

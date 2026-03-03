@@ -1,0 +1,73 @@
+{% comment %}
+  Budapest Futár — Full layout (780×460 px usable area)
+
+  Key response fields (from root):
+  - currentTime                         Unix ms (root level, NOT data.currentTime)
+  - data.entry.stopId
+  - data.entry.stopTimes[]:
+      .tripId                           → look up in data.references.trips
+      .stopHeadsign                     destination text
+      .departureTime                    scheduled Unix seconds
+      .predictedDepartureTime           real-time Unix seconds (0 or absent = no RT data)
+  - data.references.trips[tripId]:
+      .routeId                          → look up in data.references.routes
+  - data.references.routes[routeId]:
+      .shortName                        e.g. "74", "79"
+  - data.references.stops[stopId]:
+      .name                             e.g. "Ötvenhatosok tere (István utca)"
+{% endcomment %}
+
+<div class="view view--full">
+  <div class="layout layout--col layout--top">
+
+    {% assign stop = data.references.stops[data.entry.stopId] %}
+
+    {% if data.entry.stopTimes == empty %}
+
+      <div class="layout layout--col layout--center h--full">
+        <span class="value">Nincs induló járat</span>
+        <span class="label">{{ stop.name }}</span>
+      </div>
+
+    {% else %}
+
+      <div class="flex flex--col w--full" style="overflow: hidden; align-items: flex-start;">
+        {% for stopTime in data.entry.stopTimes limit: 15 %}
+          {% assign trip = data.references.trips[stopTime.tripId] %}
+          {% assign route = data.references.routes[trip.routeId] %}
+          {% assign scheduledLocal = stopTime.departureTime | plus: trmnl.user.utc_offset %}
+
+          <div class="flex flex--row" style="align-items: center; padding: 5px 0; border-bottom: 1px solid #000; gap: 10px;">
+
+            <span style="display: inline-block; min-width: 46px; background: #000; color: #fff; font-weight: 700; font-size: 14px; padding: 2px 5px; text-align: center; border-radius: 3px; flex-shrink: 0;">{{ route.shortName }}</span>
+
+            <span style="font-size: 13px; flex-shrink: 0; line-height: 1;">{% if route.type == "TRAM" %}🚋{% elsif route.type == "SUBWAY" %}🚇{% elsif route.type == "RAIL" or route.type == "SUBURBAN_RAILWAY" %}🚆{% elsif route.type == "TROLLEYBUS" %}🚎{% elsif route.type == "FERRY" %}⛴{% elsif route.type == "FUNICULAR" %}🚟{% elsif route.type == "GONDOLA" or route.type == "CABLE_CAR" %}🚡{% elsif route.type == "BICYCLE" %}🚲{% elsif route.type == "CAR" %}🚗{% elsif route.type == "WALK" %}🚶{% else %}🚌{% endif %}</span>
+
+            <span style="flex: 1; font-size: 14px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ stopTime.stopHeadsign }}</span>
+
+            {% if trip.wheelchairAccessible == true %}<span style="font-size: 12px; flex-shrink: 0;">♿</span>{% endif %}
+
+            <span style="font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; white-space: nowrap;">
+              {% if stopTime.predictedDepartureTime > 0 and stopTime.predictedDepartureTime != stopTime.departureTime %}
+                {% assign predictedLocal = stopTime.predictedDepartureTime | plus: trmnl.user.utc_offset %}
+                <s style="font-weight: 400;">{{ scheduledLocal | date: "%H:%M" }}</s> <i>{{ predictedLocal | date: "%H:%M" }}</i>
+              {% else %}
+                {{ scheduledLocal | date: "%H:%M" }}
+              {% endif %}
+            </span>
+
+          </div>
+        {% endfor %}
+      </div>
+
+    {% endif %}
+
+  </div>
+
+  <div class="title_bar">
+    <img class="image" src="/images/plugins/trmnl--render.svg" alt="">
+    <span class="title">Budapest Futár</span>
+    {% assign fetchTime = trmnl.system.timestamp_utc | plus: trmnl.user.utc_offset %}
+    <span class="instance">{% if stop.name != blank %}{{ stop.name }}{% else %}{{ trmnl.plugin_settings.instance_name }}{% endif %} · {{ fetchTime | date: "%H:%M" }}</span>
+  </div>
+</div>
