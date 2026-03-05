@@ -30,3 +30,13 @@ custom_fields:
     required: true
     placeholder: "e.g. BKK_F02297"
     description: "Single stop: BKK_F02297 — Multiple stops: BKK_F02297&stopId=BKK_F02298&stopId=BKK_F02299"
+
+  - keyname: show_type_emoji
+    name: Show vehicle type emoji
+    field_type: boolean
+    required: false
+
+  - keyname: show_accessible_emoji
+    name: Show wheelchair accessibility indicator
+    field_type: boolean
+    required: false
