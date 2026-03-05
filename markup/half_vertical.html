@@ -15,8 +15,30 @@
 
     {% else %}
 
+      {% assign min_seqs = ";" %}
+      {% for st in data.entry.stopTimes %}
+        {% assign _key = ";" | append: st.tripId | append: ":" %}
+        {% if min_seqs contains _key %}
+          {% assign _parts = min_seqs | split: _key %}
+          {% assign _after = _parts[1] | split: ";" %}
+          {% assign _existing = _after[0] | plus: 0 %}
+          {% assign _current = st.stopSequence | plus: 0 %}
+          {% if _current < _existing %}
+            {% assign _old = _key | append: _existing | append: ";" %}
+            {% assign _new = _key | append: _current | append: ";" %}
+            {% assign min_seqs = min_seqs | replace: _old, _new %}
+          {% endif %}
+        {% else %}
+          {% assign min_seqs = min_seqs | append: st.tripId | append: ":" | append: st.stopSequence | append: ";" %}
+        {% endif %}
+      {% endfor %}
+
       <div class="flex flex--col w--full" style="overflow: hidden; align-items: flex-start;">
-        {% for stopTime in data.entry.stopTimes limit: 16 %}
+        {% assign rendered = 0 %}
+        {% for stopTime in data.entry.stopTimes %}
+          {% if rendered >= 16 %}{% break %}{% endif %}
+          {% assign _match = ";" | append: stopTime.tripId | append: ":" | append: stopTime.stopSequence | append: ";" %}
+          {% unless min_seqs contains _match %}{% continue %}{% endunless %}
           {% assign trip = data.references.trips[stopTime.tripId] %}
           {% assign route = data.references.routes[trip.routeId] %}
           {% assign scheduledLocal = stopTime.departureTime | plus: trmnl.user.utc_offset %}
@@ -43,6 +65,7 @@
             </span>
 
           </div>
+          {% assign rendered = rendered | plus: 1 %}
         {% endfor %}
       </div>
 

@@ -13,7 +13,7 @@
 # The field value is substituted raw into the URL, so each extra &stopId= becomes a
 # separate query parameter and the API returns combined departures for all stops.
 
-polling_url: "https://futar.bkk.hu/api/query/v1/ws/otp/api/where/arrivals-and-departures-for-stop.json?stopId=##{{ stop_id }}&minutesBefore=0&minutesAfter=60&limit=30&includeReferences=compact&key=##{{ api_key }}"
+polling_url: "https://futar.bkk.hu/api/query/v1/ws/otp/api/where/arrivals-and-departures-for-stop.json?stopId={{ stop_id }}&minutesBefore=0&minutesAfter=45&limit=20&includeReferences=compact&key={{ api_key }}"
 
 polling_verb: GET
 
