@@ -33,17 +33,18 @@
         {% endif %}
       {% endfor %}
 
-      <div class="flex flex--col w--full" style="overflow: hidden; align-items: flex-start;">
+      <div class="flex flex--col w--full" style="align-items: flex-start; justify-content: flex-start;">
         {% assign rendered = 0 %}
         {% for stopTime in data.entry.stopTimes %}
-          {% if rendered >= 7 %}{% break %}{% endif %}
+          {% if rendered >= 8 %}{% break %}{% endif %}
           {% assign _match = ";" | append: stopTime.tripId | append: ":" | append: stopTime.stopSequence | append: ";" %}
           {% unless min_seqs contains _match %}{% continue %}{% endunless %}
           {% assign trip = data.references.trips[stopTime.tripId] %}
           {% assign route = data.references.routes[trip.routeId] %}
           {% assign scheduledLocal = stopTime.departureTime | plus: trmnl.user.utc_offset %}
 
-          <div class="flex flex--row" style="align-items: center; padding: 4px 0; gap: 10px; width: 100%;">
+          {% assign row_mod = rendered | modulo: 2 %}{% if row_mod == 1 %}{% assign row_cls = "bg--gray-75" %}{% assign row_pad = "padding: 4px 0; margin: -4px 0;" %}{% else %}{% assign row_cls = "" %}{% assign row_pad = "padding: 0;" %}{% endif %}
+          <div class="flex flex--row {{ row_cls }}" style="align-items: center; gap: 10px; width: 100%; line-height: 1; {{ row_pad }}">
 
             <span style="display: inline-block; min-width: 42px; background: #000; color: #fff; font-weight: 700; font-size: 13px; padding: 2px 5px; text-align: center; border-radius: 3px; flex-shrink: 0;">{{ route.shortName }}</span>
 
