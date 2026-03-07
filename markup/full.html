@@ -93,7 +93,7 @@
   <div class="title_bar">
     <img class="image" src="/images/plugins/trmnl--render.svg" alt="">
     <span class="title">Budapest Futár</span>
-    {% assign fetchTime = trmnl.system.timestamp_utc | plus: trmnl.user.utc_offset %}
+    {% assign fetchTime = currentTime | divided_by: 1000 | plus: trmnl.user.utc_offset %}
     <span class="instance">{{ fetchTime | date: "%H:%M" }}</span>
   </div>
 </div>
