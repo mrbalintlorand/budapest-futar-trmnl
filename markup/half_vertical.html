@@ -6,6 +6,7 @@
   <div class="layout layout--col layout--top">
 
     {% assign stop = data.references.stops[data.entry.stopId] %}
+    {% assign _single_stop = true %}{% if trmnl.plugin_settings.custom_fields_values.stop_id contains "&stopId=" %}{% assign _single_stop = false %}{% endif %}
 
     {% if data.entry.stopTimes == empty %}
 
@@ -50,7 +51,7 @@
 
             {% if trmnl.plugin_settings.custom_fields_values.show_type_emoji == "true" %}<span style="font-size: 12px; flex-shrink: 0; line-height: 1;">{% if route.type == "TRAM" %}🚋{% elsif route.type == "SUBWAY" %}🚇{% elsif route.type == "RAIL" or route.type == "SUBURBAN_RAILWAY" %}🚆{% elsif route.type == "TROLLEYBUS" %}🚎{% elsif route.type == "FERRY" %}⛴{% elsif route.type == "FUNICULAR" %}🚟{% elsif route.type == "GONDOLA" or route.type == "CABLE_CAR" %}🚡{% elsif route.type == "BICYCLE" %}🚲{% elsif route.type == "CAR" %}🚗{% elsif route.type == "WALK" %}🚶{% else %}🚌{% endif %}</span>{% endif %}
 
-            {% assign row_stop = data.references.stops[stopTime.stopId] %}<span style="font-size: 10px; flex-shrink: 0; max-width: 100px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid #000; border-radius: 2px; padding: 1px 3px;">{{ row_stop.name }}</span>
+            {% if trmnl.plugin_settings.custom_fields_values.show_stop_name == "true" %}{% assign row_stop = data.references.stops[stopTime.stopId] %}<span style="font-size: 10px; flex-shrink: 0; max-width: 100px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid #000; border-radius: 2px; padding: 1px 3px;">{{ row_stop.name }}</span>{% endif %}
 
             <span style="flex: 1; min-width: 0; font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ stopTime.stopHeadsign }}</span>
 
@@ -76,7 +77,7 @@
 
   <div class="title_bar">
     <img class="image" src="/images/plugins/trmnl--render.svg" alt="">
-    <span class="title">Budapest Futár</span>
+    {% if trmnl.plugin_settings.custom_fields_values.show_stop_name != "true" and _single_stop %}<span class="title">{{ stop.name }}</span>{% else %}<span class="title">Budapest Futár</span>{% endif %}
     {% assign fetchTime = currentTime | divided_by: 1000 | plus: trmnl.user.utc_offset %}
     <span class="instance">{{ fetchTime | date: "%H:%M" }}</span>
   </div>

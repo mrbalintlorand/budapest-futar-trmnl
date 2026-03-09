@@ -40,3 +40,8 @@ custom_fields:
     name: Show wheelchair accessibility indicator
     field_type: boolean
     required: false
+
+  - keyname: show_stop_name
+    name: Show stop name in each row
+    field_type: boolean
+    required: false
